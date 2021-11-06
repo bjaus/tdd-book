@@ -6,6 +6,9 @@ class Money:
         self.amount = amount
         self.currency = currency
 
+    def __repr__(self):
+        return f"{self.amount:0.2f} {self.currency}"
+
     def __eq__(self, other: Money):
         return self.amount == other.amount and self.currency == other.currency
 
