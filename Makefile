@@ -1,6 +1,9 @@
 test:
-	go test go/money_test.go
+	@echo GOLANG
+	@find . -name go.mod -execdir go test ./... \;
 	@echo
-	node js/test_money.js
+	@echo JAVASCRIPT
+	@node js/test_money.js
 	@echo
-	python py/test_money.py
+	@echo PYTHON
+	@python py/test_money.py
