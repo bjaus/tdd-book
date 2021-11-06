@@ -1,7 +1,21 @@
 from __future__ import annotations
 
 import typing as t
+import functools
+import operator
 import unittest
+
+
+class Portfolio:
+    def __init__(self):
+        self.moneys = []
+
+    def add(self, *moneys):
+        self.moneys.extend(moneys)
+
+    def evaluate(self, currency: str):
+        total = functools.reduce(operator.add, map(lambda m: m.amount, self.moneys))
+        return Money(amount=total, currency=currency)
 
 
 class Money:
@@ -20,6 +34,14 @@ class Money:
 
 
 class TestMoney(unittest.TestCase):
+    def test_addition(self):
+        five = Money(amount=5, currency="USD")
+        ten = Money(amount=10, currency="USD")
+        fifteen = Money(amount=15, currency="USD")
+        portfolio = Portfolio()
+        portfolio.add(five, ten)
+        self.assertEqual(fifteen, portfolio.evaluate("USD"))
+
     def test_multiplication_in_dollars(self):
         money = Money(amount=5, currency="USD")
         expected = Money(amount=10, currency="USD")
