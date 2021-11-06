@@ -1,74 +1,39 @@
-package main
+package stocks_test
 
-import "testing"
+import (
+	"tdd/stocks"
+	"testing"
+)
 
-type Portfolio []Money
-
-func (p Portfolio) Add(moneys ...Money) Portfolio {
-	for _, m := range moneys {
-		p = append(p, m)
-	}
-	return p
-}
-
-func (p Portfolio) Evaluate(currency string) Money {
-	total := 0.0
-	for _, m := range p {
-		total += m.amount
-	}
-	return Money{amount: total, currency: currency}
-}
-
-type Money struct {
-	amount   float64
-	currency string
-}
-
-func (m Money) Times(multiplier float64) Money {
-	return Money{amount: m.amount * multiplier, currency: m.currency}
-}
-
-func (m Money) Divide(divisor float64) Money {
-	return Money{amount: m.amount / divisor, currency: m.currency}
-}
-
-func assertEqual(t *testing.T, expected Money, actual Money) {
+func assertEqual(t *testing.T, expected stocks.Money, actual stocks.Money) {
 	if expected != actual {
 		t.Errorf("expected %+v, got %+v", expected, actual)
 	}
 }
 
 func TestAddition(t *testing.T) {
-	var portfolio Portfolio
-	var portfolioUSD Money
+	var portfolio stocks.Portfolio
 
-	five := Money{amount: 5, currency: "USD"}
-	ten := Money{amount: 10, currency: "USD"}
-	fifteen := Money{amount: 15, currency: "USD"}
+	five := stocks.NewMoney(5, "USD")
+	ten := stocks.NewMoney(10, "USD")
+	expected := stocks.NewMoney(15, "USD")
 
 	portfolio = portfolio.Add(five, ten)
-	portfolioUSD = portfolio.Evaluate("USD")
+	result := portfolio.Evaluate("USD")
 
-	assertEqual(t, fifteen, portfolioUSD)
+	assertEqual(t, expected, result)
 }
 
 func TestDivision(t *testing.T) {
-	money := Money{amount: 4002, currency: "KRW"}
-	actual := money.Divide(4)
-	expected := Money{amount: 1000.5, currency: "KRW"}
-	assertEqual(t, expected, actual)
+	money := stocks.NewMoney(4002, "KRW")
+	result := money.Divide(4)
+	expected := stocks.NewMoney(1000.5, "KRW")
+	assertEqual(t, expected, result)
 }
 
-func TestMuliplicationInDollars(t *testing.T) {
-	money := Money{amount: 5, currency: "USD"}
-	actual := money.Times(2)
-	expected := Money{amount: 10, currency: "USD"}
-	assertEqual(t, expected, actual)
-}
-
-func TestMuliplicationInEuros(t *testing.T) {
-	money := Money{amount: 10, currency: "EUR"}
-	actual := money.Times(2)
-	expected := Money{amount: 20, currency: "EUR"}
-	assertEqual(t, expected, actual)
+func TestMuliplication(t *testing.T) {
+	money := stocks.NewMoney(10, "EUR")
+	result := money.Times(2)
+	expected := stocks.NewMoney(20, "EUR")
+	assertEqual(t, expected, result)
 }
