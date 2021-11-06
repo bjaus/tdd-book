@@ -1,6 +1,6 @@
-import * as assert from 'assert';
-import {Money} from './money.mjs';
-import {Portfolio} from './portfolio.mjs';
+const assert = require('assert');
+const Money = require('./money');
+const Portfolio = require('./portfolio');
 
 
 class MoneyTest {

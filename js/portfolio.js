@@ -1,6 +1,6 @@
-import {Money} from './money.mjs';
+const Money = require("./money")
 
-export class Portfolio {
+class Portfolio {
   constructor() {
     this.moneys = [];
   }
@@ -16,3 +16,5 @@ export class Portfolio {
     return new Money(total, currency);
   }
 }
+
+module.exports = Portfolio;
