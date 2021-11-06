@@ -1,36 +1,7 @@
-from __future__ import annotations
-
-import typing as t
-import functools
-import operator
 import unittest
 
-
-class Portfolio:
-    def __init__(self):
-        self.moneys = []
-
-    def add(self, *moneys):
-        self.moneys.extend(moneys)
-
-    def evaluate(self, currency: str):
-        total = functools.reduce(operator.add, map(lambda m: m.amount, self.moneys))
-        return Money(amount=total, currency=currency)
-
-
-class Money:
-    def __init__(self, amount: int | float, currency: str):
-        self.amount = amount
-        self.currency = currency
-
-    def __eq__(self, other: Money):
-        return self.amount == other.amount and self.currency == other.currency
-
-    def times(self, multiplier: int | float):
-        return Money(amount=self.amount * multiplier, currency=self.currency)
-
-    def divide(self, divisor: int | float):
-        return Money(amount=self.amount / divisor, currency=self.currency)
+from money import Money
+from portfolio import Portfolio
 
 
 class TestMoney(unittest.TestCase):
@@ -41,11 +12,6 @@ class TestMoney(unittest.TestCase):
         portfolio = Portfolio()
         portfolio.add(five, ten)
         self.assertEqual(fifteen, portfolio.evaluate("USD"))
-
-    def test_multiplication_in_dollars(self):
-        money = Money(amount=5, currency="USD")
-        expected = Money(amount=10, currency="USD")
-        self.assertEqual(money.times(2), expected)
 
     def test_multiplication_in_euros(self):
         money = Money(amount=10, currency="EUR")
