@@ -2,7 +2,7 @@ test: go js py
 
 go:
 	@echo GOLANG
-	@find . -name go.mod -execdir go test -v ./... \;
+	@find . -name go.mod -execdir go test -v -shuffle on ./... \;
 	@echo
 
 js:
