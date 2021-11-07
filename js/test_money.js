@@ -1,9 +1,28 @@
 const assert = require('assert');
 const Money = require('./money');
 const Portfolio = require('./portfolio');
+const Bank = require('./bank');
 
 
 class MoneyTest {
+  constructor() {
+    this.bank = new Bank();
+    this.bank.addExchangeRate("EUR", "USD", 1.2);
+    this.bank.addExchangeRate("USD", "KRW", 1100);
+  }
+
+  testConversionWithMissingExchangeRate() {
+    let bank = new Bank();
+    let tenEuros = new Money(10, "EUR");
+    let expected = new Error("EUR->Kalganid");
+    assert.throws(function () { bank.convert(tenEuros, "Kalganid"); }, expected);
+  }
+
+  testConversion() {
+    let tenEuros = new Money(10, "EUR");
+    assert.deepStrictEqual(this.bank.convert(tenEuros, "USD"), new Money(12, "USD"));
+  }
+
   testAdditionWithMultipleMissingExchangeRates() {
     let oneDollar = new Money(1, "USD")
     let oneEuro = new Money(1, "EUR")
@@ -11,7 +30,7 @@ class MoneyTest {
     let portfolio = new Portfolio();
     portfolio.add(oneDollar, oneEuro, oneWon);
     let expected = new Error("Missing exchange rate(s):[USD->Kalganid,EUR->Kalganid,KRW->Kalganid]");
-    assert.throws(function() {portfolio.evaluate("Kalganid")}, expected);
+    assert.throws(function() {portfolio.evaluate(new Bank(), "Kalganid")}, expected);
   }
 
   testAdditionOfDollarsAndWons() {
@@ -20,7 +39,7 @@ class MoneyTest {
     let portfolio = new Portfolio();
     portfolio.add(one, eleven);
     let expected = new Money(2200, "KRW")
-    assert.deepStrictEqual(portfolio.evaluate("KRW"), expected);
+    assert.deepStrictEqual(portfolio.evaluate(this.bank, "KRW"), expected);
   }
 
   testAdditionOfDollarsAndEuros() {
@@ -29,7 +48,7 @@ class MoneyTest {
     let portfolio = new Portfolio();
     portfolio.add(five, ten)
     let expected = new Money(17, "USD")
-    assert.deepStrictEqual(portfolio.evaluate("USD"), expected)
+    assert.deepStrictEqual(portfolio.evaluate(this.bank, "USD"), expected)
   }
 
   testMultiplication() {
@@ -50,7 +69,7 @@ class MoneyTest {
     let fifteen = new Money(15, "USD")
     let portfolio = new Portfolio();
     portfolio.add(five, ten);
-    assert.deepStrictEqual(portfolio.evaluate("USD"), fifteen)
+    assert.deepStrictEqual(portfolio.evaluate(this.bank, "USD"), fifteen)
   }
 
   get() {

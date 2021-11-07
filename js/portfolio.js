@@ -10,32 +10,21 @@ class Portfolio {
     this.moneys = this.moneys.concat(moneys);
   }
 
-  evaluate(currency) {
+  evaluate(bank, currency) {
     let failures = [];
     let total = this.moneys.reduce((sum, money) => {
-      let convertedAmount = this.convert(money, currency);
-      if (convertedAmount === undefined) {
-        failures.push(money.currency + "->" + currency);
+      try {
+        let converted = bank.convert(money, currency);
+        return sum + converted.amount;
+      } catch (e) {
+        failures.push(e.message);
         return sum;
       }
-      return sum + convertedAmount;
     }, 0);
     if (!failures.length) {
       return new Money(total, currency);
     }
     throw new Error("Missing exchange rate(s):[" + failures.join() + "]");
-  }
-
-  convert(money, currency) {
-    if (money.currency === currency) {
-      return money.amount;
-    }
-    let key = money.currency + '->' + currency;
-    let rate = exchangeRates.get(key);
-    if (rate === undefined) {
-      return undefined;
-    }
-    return money.amount * rate;
   }
 }
 
