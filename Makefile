@@ -12,7 +12,7 @@ js:
 
 py:
 	@echo PYTHON
-	@python py/test_money.py -v
+	@pytest -v --random-order
 	@echo
 
 .PHONY: go js py
