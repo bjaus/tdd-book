@@ -5,6 +5,19 @@ from portfolio import Portfolio
 
 
 class TestMoney(unittest.TestCase):
+    def test_addition_with_multiple_missing_exchange_rates(self):
+        one_dollar = Money(1, "USD")
+        one_euro = Money(1, "EUR")
+        one_won = Money(1, "KRW")
+        portfolio = Portfolio()
+        portfolio.add(one_dollar, one_euro, one_won)
+
+        with self.assertRaisesRegexp(
+            Exception,
+            r"Missing exchange rate\(s\):\[USD\-\>Kalganid,EUR\-\>Kalganid,KRW\-\>Kalganid\]",
+        ):
+            portfolio.evaluate("Kalganid")
+
     def test_addition_of_dollars_and_wons(self):
         one = Money(1, "USD")
         eleven = Money(1100, "KRW")

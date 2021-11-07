@@ -5,6 +5,21 @@ import (
 	"testing"
 )
 
+func TestAdditionWithMultipleMissingExchangeRates(t *testing.T) {
+	var portfolio s.Portfolio
+
+	oneDollar := s.NewMoney(1, "USD")
+	oneEuro := s.NewMoney(1, "EUR")
+	oneWon := s.NewMoney(1, "KRW")
+
+	portfolio = portfolio.Add(oneDollar, oneEuro, oneWon)
+
+	expected := "Missing exchange rate(s):[USD->Kalganid,EUR->Kalganid,KRW->Kalganid,]"
+	_, result := portfolio.Evaluate("Kalganid")
+
+	assertEqual(t, expected, result.Error())
+}
+
 func TestAddtiionaOfDollarsAndWons(t *testing.T) {
 	var portfolio s.Portfolio
 
@@ -12,7 +27,7 @@ func TestAddtiionaOfDollarsAndWons(t *testing.T) {
 	eleven := s.NewMoney(1100, "KRW")
 
 	portfolio = portfolio.Add(one, eleven)
-	result := portfolio.Evaluate("KRW")
+	result, _ := portfolio.Evaluate("KRW")
 
 	expected := s.NewMoney(2200, "KRW")
 
@@ -28,7 +43,7 @@ func TestAdditionOfDollarsAndEuros(t *testing.T) {
 	portfolio = portfolio.Add(five, ten)
 
 	expected := s.NewMoney(17, "USD")
-	result := portfolio.Evaluate("USD")
+	result, _ := portfolio.Evaluate("USD")
 
 	assertEqual(t, expected, result)
 }
@@ -41,7 +56,7 @@ func TestAddition(t *testing.T) {
 	expected := s.NewMoney(15, "USD")
 
 	portfolio = portfolio.Add(five, ten)
-	result := portfolio.Evaluate("USD")
+	result, _ := portfolio.Evaluate("USD")
 
 	assertEqual(t, expected, result)
 }
@@ -60,8 +75,8 @@ func TestMuliplication(t *testing.T) {
 	assertEqual(t, expected, result)
 }
 
-func assertEqual(t *testing.T, expected s.Money, actual s.Money) {
+func assertEqual(t *testing.T, expected interface{}, actual interface{}) {
 	if expected != actual {
-		t.Errorf("expected %+v, got %+v", expected, actual)
+		t.Errorf("Expected %+v, got %+v", expected, actual)
 	}
 }
