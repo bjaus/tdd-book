@@ -5,6 +5,14 @@ from portfolio import Portfolio
 
 
 class TestMoney(unittest.TestCase):
+    def test_addition_of_dollars_and_wons(self):
+        one = Money(1, "USD")
+        eleven = Money(1100, "KRW")
+        portfolio = Portfolio()
+        portfolio.add(one, eleven)
+        expected = Money(2200, "KRW")
+        self.assertEquals(expected, portfolio.evaluate("KRW"))
+
     def test_addition_of_dollars_and_euros(self):
         five = Money(5, "USD")
         ten = Money(10, "EUR")

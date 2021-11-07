@@ -1,10 +1,10 @@
 from money import Money
+from rates import EXCHANGE_RATES
 
 
 class Portfolio:
     def __init__(self):
         self.__moneys = []
-        self.__eur_to_usd = 1.2
 
     def add(self, *moneys: tuple[Money]):
         self.__moneys.extend(moneys)
@@ -14,6 +14,8 @@ class Portfolio:
         return Money(amount=total, currency=currency)
 
     def __convert(self, money: Money, currency: str) -> int | float:
+        key = f"{money.currency}->{currency}"
+        rate = EXCHANGE_RATES.get(key)
         if money.currency == currency:
             return money.amount
-        return money.amount * self.__eur_to_usd
+        return money.amount * rate

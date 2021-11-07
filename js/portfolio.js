@@ -1,4 +1,5 @@
-const Money = require("./money")
+const Money = require("./money");
+const exchangeRates = require("./rates");
 
 class Portfolio {
   constructor() {
@@ -17,11 +18,12 @@ class Portfolio {
   }
 
   convert(money, currency) {
-    let eurToUsd = 1.2;
+    let key = money.currency + '->' + currency;
+    let rate = exchangeRates.get(key);
     if (money.currency === currency) {
       return money.amount;
     }
-    return money.amount * eurToUsd;
+    return money.amount * rate;
   }
 }
 

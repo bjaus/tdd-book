@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func TestAddtiionaOfDollarsAndWons(t *testing.T) {
+	var portfolio s.Portfolio
+
+	one := s.NewMoney(1, "USD")
+	eleven := s.NewMoney(1100, "KRW")
+
+	portfolio = portfolio.Add(one, eleven)
+	result := portfolio.Evaluate("KRW")
+
+	expected := s.NewMoney(2200, "KRW")
+
+	assertEqual(t, expected, result)
+}
+
 func TestAdditionOfDollarsAndEuros(t *testing.T) {
 	var portfolio s.Portfolio
 

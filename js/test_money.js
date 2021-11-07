@@ -4,6 +4,15 @@ const Portfolio = require('./portfolio');
 
 
 class MoneyTest {
+  testAdditionOfDollarsAndWons() {
+    let one = new Money(1, "USD")
+    let eleven = new Money(1100, "KRW")
+    let portfolio = new Portfolio();
+    portfolio.add(one, eleven);
+    let expected = new Money(2200, "KRW")
+    assert.deepStrictEqual(portfolio.evaluate("KRW"), expected);
+  }
+
   testAdditionOfDollarsAndEuros() {
     let five = new Money(5, "USD")
     let ten = new Money(10, "EUR")
