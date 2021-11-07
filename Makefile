@@ -1,3 +1,7 @@
+PY ?= python3
+VENV = venv
+PIP = $(VENV)/bin/pip
+
 test: go js py
 
 go:
@@ -10,9 +14,17 @@ js:
 	@node js/test_money.js
 	@echo
 
-py:
+py: $(PIP)
 	@echo PYTHON
 	@pytest -v --random-order
 	@echo
 
-.PHONY: go js py
+$(PIP): requirements.txt
+	@$(PY) -m venv $(VENV)
+	@$(PIP) install --upgrade pip wheel
+	@$(PIP) install -r requirements.txt
+
+clean:
+	@rm -rf $(VENV)
+
+.PHONY: go js py clean

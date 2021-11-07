@@ -1,4 +1,5 @@
+*.py[cod]
+*.swp
 .python-version
 __pycache__
-*.swp
-*.py[cod]
+venv
