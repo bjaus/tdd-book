@@ -17,11 +17,12 @@ class TestMoney(unittest.TestCase):
         with self.assertRaisesRegex(Exception, "EUR->Kalganid"):
             bank.convert(ten_euros, "Kalganid")
 
-    def test_conversion(self):
-        bank = Bank()
-        bank.add_exchange_rate("EUR", "USD", 1.2)
+    def test_conversion_with_different_rates_between_two_currencies(self):
         ten_euros = Money(10, "EUR")
-        self.assertEqual(bank.convert(ten_euros, "USD"), Money(12, "USD"))
+        self.assertEqual(self.bank.convert(ten_euros, "USD"), Money(12, "USD"))
+
+        self.bank.add_exchange_rate("EUR", "USD", 1.3)
+        self.assertEqual(self.bank.convert(ten_euros, "USD"), Money(13, "USD"))
 
     def test_addition_with_multiple_missing_exchange_rates(self):
         one_dollar = Money(1, "USD")

@@ -5,12 +5,6 @@ const Bank = require('./bank');
 
 
 class MoneyTest {
-  constructor() {
-    this.bank = new Bank();
-    this.bank.addExchangeRate("EUR", "USD", 1.2);
-    this.bank.addExchangeRate("USD", "KRW", 1100);
-  }
-
   testConversionWithMissingExchangeRate() {
     let bank = new Bank();
     let tenEuros = new Money(10, "EUR");
@@ -18,9 +12,12 @@ class MoneyTest {
     assert.throws(function () { bank.convert(tenEuros, "Kalganid"); }, expected);
   }
 
-  testConversion() {
+  testConversionWithDifferentRatesBetweenTwoCurrencies() {
     let tenEuros = new Money(10, "EUR");
     assert.deepStrictEqual(this.bank.convert(tenEuros, "USD"), new Money(12, "USD"));
+
+    this.bank.addExchangeRate("EUR", "USD", 1.3);
+    assert.deepStrictEqual(this.bank.convert(tenEuros, "USD"), new Money(13, "USD"));
   }
 
   testAdditionWithMultipleMissingExchangeRates() {
@@ -72,13 +69,27 @@ class MoneyTest {
     assert.deepStrictEqual(portfolio.evaluate(this.bank, "USD"), fifteen)
   }
 
+  randomize(methods) {
+    for (let i = methods.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [methods[i], methods[j]] = [methods[j], methods[i]];
+    }
+    return methods;
+  }
+
   get() {
     let proto = MoneyTest.prototype;
     let props = Object.getOwnPropertyNames(proto);
     let methods = props.filter(p => {
       return typeof proto[p] === "function" && p.startsWith("test");
     });
-    return methods;
+    return this.randomize(methods);
+  }
+
+  setUp() {
+    this.bank = new Bank();
+    this.bank.addExchangeRate("EUR", "USD", 1.2);
+    this.bank.addExchangeRate("USD", "KRW", 1100);
   }
 
   run() {
@@ -87,6 +98,7 @@ class MoneyTest {
       console.log("Running: %s()", m)
       let method = Reflect.get(this, m);
       try {
+        this.setUp();
         Reflect.apply(method, this, []);
       } catch (e) {
         if (e instanceof assert.AssertionError) {

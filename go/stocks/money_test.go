@@ -8,7 +8,7 @@ import (
 
 var bank s.Bank
 
-func init() {
+func initExchangeRates() {
 	bank = s.NewBank()
 	bank.AddExchangeRate("EUR", "USD", 1.2)
 	bank.AddExchangeRate("USD", "KRW", 1100)
@@ -22,16 +22,39 @@ func TestConversionWithMissingExchangeRate(t *testing.T) {
 	assertEqual(t, "EUR->Kalganid", err.Error())
 }
 
-func TestConversion(t *testing.T) {
-	bank := s.NewBank()
-	bank.AddExchangeRate("EUR", "USD", 1.2)
+func TestAdditionOfDollarsAndEuros(t *testing.T) {
+	initExchangeRates()
+
+	var portfolio s.Portfolio
+
+	five := s.NewMoney(5, "USD")
+	ten := s.NewMoney(10, "EUR")
+
+	portfolio = portfolio.Add(five, ten)
+
+	expected := s.NewMoney(17, "USD")
+	result, _ := portfolio.Evaluate(bank, "USD")
+
+	assertEqual(t, expected, *result)
+}
+
+func TestConversionWithDifferenceRatesBetweenTwoCurrencies(t *testing.T) {
+	initExchangeRates()
+
 	tenEuros := s.NewMoney(10, "EUR")
 	result, err := bank.Convert(tenEuros, "USD")
 	assertNil(t, err)
-	assertEqual(t, *result, s.NewMoney(12, "USD"))
+	assertEqual(t, s.NewMoney(12, "USD"), *result)
+
+	bank.AddExchangeRate("EUR", "USD", 1.3)
+	result, err = bank.Convert(tenEuros, "USD")
+	assertNil(t, err)
+	assertEqual(t, s.NewMoney(13, "USD"), *result)
 }
 
 func TestAdditionWithMultipleMissingExchangeRates(t *testing.T) {
+	initExchangeRates()
+
 	var portfolio s.Portfolio
 
 	oneDollar := s.NewMoney(1, "USD")
@@ -48,6 +71,8 @@ func TestAdditionWithMultipleMissingExchangeRates(t *testing.T) {
 }
 
 func TestAddtiionaOfDollarsAndWons(t *testing.T) {
+	initExchangeRates()
+
 	var portfolio s.Portfolio
 
 	one := s.NewMoney(1, "USD")
@@ -61,21 +86,9 @@ func TestAddtiionaOfDollarsAndWons(t *testing.T) {
 	assertEqual(t, expected, *result)
 }
 
-func TestAdditionOfDollarsAndEuros(t *testing.T) {
-	var portfolio s.Portfolio
-
-	five := s.NewMoney(5, "USD")
-	ten := s.NewMoney(10, "EUR")
-
-	portfolio = portfolio.Add(five, ten)
-
-	expected := s.NewMoney(17, "USD")
-	result, _ := portfolio.Evaluate(bank, "USD")
-
-	assertEqual(t, expected, *result)
-}
-
 func TestAddition(t *testing.T) {
+	initExchangeRates()
+
 	var portfolio s.Portfolio
 
 	five := s.NewMoney(5, "USD")
